@@ -29,12 +29,16 @@ function App() {
   const changeCurrentExp = (exp) => {
     if (parseInt(exp) <= 13034431) {
       setCurrentExp(exp);
+
       for (let i = 1; i < 100; i++) {
         if (exp >= xp[i] && exp < xp[i + 1]) {
           setCurrentLevel(i);
         }
       }
-      setExpNeeded(xp[currentLevel + 1] - currentExp);
+      if (targetExp < currentExp) {
+        setTargetExp(xp[currentLevel + 1]);
+      }
+      setExpNeeded(targetExp - exp);
     }
   };
 
@@ -113,6 +117,14 @@ function App() {
           />
         </div>
       </div>
+      <div className="text-light">
+        CurrentExp: {currentExp} <br />
+        CurrentLevel: {currentLevel}
+        <br />
+        TargetExp: {targetExp}
+        <br />
+        ExpNeeded: {expNeeded}
+      </div>
       <div className="row w-100">
         <div className="col-12 col-md-8 mx-auto card shadow p-4 bg-dark mt-3">
           <div className="row w-100 mx-auto border-bottom border-light mb-3">
@@ -139,12 +151,6 @@ function App() {
           </div>
           {usedSkillActions.map(function (skill) {
             return (
-              // <div className="row w-100">
-              //   <h4 className="text-light">
-              //     {skill.name} | Level Req: {skill.level} | Exp Gained:{" "}
-              //     {skill.experience}
-              //   </h4>
-              // </div>
               <ActionComponent
                 key={skill.name}
                 skill={skill}
