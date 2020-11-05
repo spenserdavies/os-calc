@@ -2,28 +2,40 @@ import "./App.css";
 import experience from "./levels";
 import skills from "./skills";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ActionComponent from "./components/action";
 
 function App() {
-  const [targetExp, setTargetExp] = useState(83);
-  const [currentExp, setCurrentExp] = useState(0);
-  const [currentSkill, setCurrentSkill] = useState("agility");
-  const [usedSkillActions, setUsedSkillActions] = useState([]);
-
   let xp = experience;
   let exp = Object.keys(xp);
   let skillNames = Object.keys(skills);
 
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [targetExp, setTargetExp] = useState(xp[currentLevel + 1]);
+  const [currentExp, setCurrentExp] = useState(0);
+  const [currentSkill, setCurrentSkill] = useState("agility");
+  const [usedSkillActions, setUsedSkillActions] = useState(skills["agility"]);
+  const [expNeeded, setExpNeeded] = useState(83);
+
+  useEffect(() => {
+    setExpNeeded(targetExp - currentExp);
+  }, [currentExp, targetExp]);
+
   const targetLevelChange = (level) => {
-    console.log(level);
     setTargetExp(xp[level]);
-    console.log(targetExp);
+    setExpNeeded(targetExp - currentExp);
   };
 
   const changeCurrentExp = (exp) => {
-    console.log(exp);
-    setCurrentExp(exp);
+    if (parseInt(exp) <= 13034431) {
+      setCurrentExp(exp);
+      for (let i = 1; i < 100; i++) {
+        if (exp >= xp[i] && exp < xp[i + 1]) {
+          setCurrentLevel(i);
+        }
+      }
+      setExpNeeded(xp[currentLevel + 1] - currentExp);
+    }
   };
 
   const changeSkill = (skill) => {
@@ -46,13 +58,18 @@ function App() {
       </header>
       <div className="row w-100">
         <div className="col-12 col-md-8 col-lg-5 mx-auto card shadow text-light align-items-center p-4 bg-dark">
+          {/* <h1 className="text-light">{currentLevel}</h1> */}
           <select
             className="form-control w-50 text-center mb-4"
             value={currentSkill}
             onChange={(e) => changeSkill(e.target.value)}
           >
             {skillNames.map(function (key) {
-              return <option value={key}>{key}</option>;
+              return (
+                <option value={key} key={key}>
+                  {key}
+                </option>
+              );
             })}
           </select>
 
@@ -61,7 +78,7 @@ function App() {
             type="number"
             step="1"
             min="0"
-            max="200000000"
+            max="13034430"
             className="form-control w-50 text-center mb-3"
             value={currentExp}
             onChange={(e) => changeCurrentExp(e.target.value)}
@@ -73,7 +90,15 @@ function App() {
             onChange={(e) => targetLevelChange(e.target.value)}
           >
             {exp.map(function (exp) {
-              return <option value={exp}>{exp}</option>;
+              if (parseInt(exp) > currentLevel) {
+                return (
+                  <option key={exp} value={exp}>
+                    {exp}
+                  </option>
+                );
+              } else {
+                return;
+              }
             })}
           </select>
 
@@ -82,7 +107,7 @@ function App() {
           </h5>
           <input
             type="number"
-            value={targetExp - currentExp}
+            value={expNeeded}
             className="form-control w-50 text-center mb-3 shadow"
             disabled
           />
@@ -91,7 +116,7 @@ function App() {
       <div className="row w-100">
         <div className="col-12 col-md-8 mx-auto card shadow p-4 bg-dark mt-3">
           <div className="row w-100 mx-auto border-bottom border-light mb-3">
-            <div className="col-1">
+            <div className="col-2">
               <p className="text-light">
                 <b>Level</b>
               </p>
@@ -106,14 +131,9 @@ function App() {
                 <b>Exp Gained</b>
               </p>
             </div>
-            <div className="col-2">
+            <div className="col-3">
               <p className="text-light">
-                <b>Actions</b>
-              </p>
-            </div>
-            <div className="col-2">
-              <p className="text-light">
-                <b>Link</b>
+                <b>Actions Left</b>
               </p>
             </div>
           </div>
@@ -126,8 +146,10 @@ function App() {
               //   </h4>
               // </div>
               <ActionComponent
+                key={skill.name}
                 skill={skill}
                 expNeeded={targetExp - currentExp}
+                currentLevel={currentLevel}
               />
             );
           })}
