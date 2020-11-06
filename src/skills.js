@@ -591,7 +591,7 @@ const skills = {
     {
       name: "Amethyst",
       level: 92,
-      experienec: 240,
+      experience: 240,
       link: "https://oldschool.runescape.wiki/w/Amethyst",
     },
   ],
