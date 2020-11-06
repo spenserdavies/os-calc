@@ -16,12 +16,14 @@ function App() {
   const [currentSkill, setCurrentSkill] = useState("agility");
   const [usedSkillActions, setUsedSkillActions] = useState(skills["agility"]);
   const [expNeeded, setExpNeeded] = useState(83);
+  const [targetLevel, setTargetLevel] = useState(2);
 
   useEffect(() => {
     setExpNeeded(targetExp - currentExp);
   }, [currentExp, targetExp]);
 
   const targetLevelChange = (level) => {
+    setTargetLevel(level);
     setTargetExp(xp[level]);
     setExpNeeded(targetExp - currentExp);
   };
@@ -35,8 +37,10 @@ function App() {
           setCurrentLevel(i);
         }
       }
-      if (targetExp < currentExp) {
+      if (expNeeded <= 0) {
+        setTargetLevel(currentLevel + 1);
         setTargetExp(xp[currentLevel + 1]);
+        setExpNeeded(targetExp - currentExp);
       }
       setExpNeeded(targetExp - exp);
     }
@@ -53,6 +57,12 @@ function App() {
     let i = str.indexOf(".");
     let str2 = str.substring(0, i);
     setCurrentExp(parseInt(str2));
+  }
+
+  if (expNeeded <= 0) {
+    setTargetLevel(currentLevel + 1);
+    setTargetExp(xp[currentLevel + 1]);
+    setExpNeeded(targetExp - currentExp);
   }
 
   return (
@@ -91,6 +101,7 @@ function App() {
           <h5>Target Level</h5>
           <select
             className="form-control w-25 text-center mb-4"
+            value={targetLevel}
             onChange={(e) => targetLevelChange(e.target.value)}
           >
             {exp.map(function (exp) {
