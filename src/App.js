@@ -128,15 +128,7 @@ function App() {
           />
         </div>
       </div>
-      <div className="text-light">
-        CurrentExp: {currentExp} <br />
-        CurrentLevel: {currentLevel}
-        <br />
-        TargetExp: {targetExp}
-        <br />
-        ExpNeeded: {expNeeded}
-      </div>
-      <div className="row w-100">
+      <div className="row w-100 mb-5">
         <div className="col-12 col-md-8 mx-auto card shadow p-4 bg-dark mt-3">
           <div className="row w-100 mx-auto border-bottom border-light mb-3">
             <div className="col-2">
